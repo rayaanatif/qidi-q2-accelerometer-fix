@@ -21,6 +21,25 @@ firmware**; you read the image off your own toolhead and patch it locally.
 Nobody else has reported a Q2 result yet. If you try it, please open an issue with
 your versions and the output of the `snapshot` step.
 
+## Compatibility: one exact toolhead image only
+
+The patch changes bytes inside the toolhead (THR) firmware, so it only works on that exact image:
+
+- **Works on:** Qidi Q2 toolhead firmware **THR 02.02.01.08** (35,056 bytes, SHA-256
+  `1d34b4b0142f2a2047f08c2fae59d827bcee0adbd1563b4bd1de311dff8b2d62`). That image ships inside
+  printer firmware **01.01.02.04 (NA)**. Other Q2 releases may carry the same image; check
+  yours, do not assume.
+- **Does not work on:** older toolhead images. For example the toolhead file in Qidi's
+  `Q2_V1_1_1` package (34,780 bytes, SHA-256
+  `e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b`) contains neither of the two
+  byte patterns the patch looks for, so the tools refuse it. Whether that older image has the
+  same bug has not been tested.
+- **The printer software version alone does not decide it.** What matters is the SHA-256 of the
+  application running on your toolhead. Step 5 of the guide reads it with a read-only snapshot.
+  If it is not the hash above, stop; nothing in this repo applies to your toolhead.
+- **A Qidi update that includes a new toolhead image overwrites the fix** and the patch would
+  have to be redone for that new image.
+
 ## Read this first
 
 - **This reflashes your toolhead.** A power cut or crash during the write can leave it
