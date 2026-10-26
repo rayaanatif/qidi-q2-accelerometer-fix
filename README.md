@@ -32,8 +32,9 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
 - **Does not work on:** older toolhead images. For example the toolhead file in Qidi's
   `Q2_V1_1_1` package (34,780 bytes, SHA-256
   `e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b`) contains neither of the two
-  byte patterns the patch looks for, so the tools refuse it. Whether that older image has the
-  same bug has not been tested.
+  byte patterns the patch looks for, so the tools refuse it. The same bug is present in its code, and
+  a derived patch exists but is **untested on hardware**; see
+  [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md).
 - **The printer software version alone does not decide it.** What matters is the SHA-256 of the
   application running on your toolhead. Step 5 of the guide reads it with a read-only snapshot.
   If it is not the hash above, stop; nothing in this repo applies to your toolhead.
@@ -52,7 +53,7 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
 
 ## Start
 
-Follow [docs/GUIDE.md](docs/GUIDE.md). Helper scripts live in [tools/](tools/).
+Follow [docs/GUIDE.md](docs/GUIDE.md). Helper scripts live in [tools/](tools/). For other toolhead images see [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md) (experimental, untested).
 
 ## Credits
 
