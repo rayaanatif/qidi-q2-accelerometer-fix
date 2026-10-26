@@ -3,6 +3,7 @@
 
     python3 lis2dw_patch.py scan  IMAGE.bin
     python3 lis2dw_patch.py patch IMAGE.bin OUT.bin [--allow-unknown]
+    python3 lis2dw_patch.py fingerprint IMAGE.bin      (for images no template matches)
 
 The bug (fixed upstream in Klipper commit 6269dda56bb7c08263153b18715d08e2d964bcab): the
 accelerometer polling task sleeps when the FIFO still holds samples and re-runs
@@ -115,6 +116,62 @@ def sha(b):
     return hashlib.sha256(b).hexdigest()
 
 
+
+def embedded_version(data):
+    """Version name stored in the image's Klipper identify block (zlib stream)."""
+    import re
+    import zlib
+    for m in re.finditer(b"\x78[\x01\x5e\x9c\xda]", data):
+        try:
+            out = zlib.decompressobj().decompress(data[m.start():m.start() + 20000])
+        except Exception:
+            continue
+        j = re.search(rb'"version":\s*"([^"]*)"', out)
+        if j:
+            return j.group(1).decode("ascii", "replace")
+    return None
+
+
+def anchors(data):
+    """Register-agnostic anchors of the LIS2DW FIFO routine:
+    `and Rd,Rn,#63` and `and Rd,Rn,#64` (32-bit), and `cmp Rn,#45` (16-bit) within 0x60 bytes."""
+    a63 = [i for i in range(len(data) - 3)
+           if data[i + 1] == 0xF0 and data[i] < 0x10 and data[i + 2] == 0x3F and data[i + 3] < 0x10]
+    a64 = [i for i in range(len(data) - 3)
+           if data[i + 1] == 0xF0 and data[i] < 0x10 and data[i + 2] == 0x40 and data[i + 3] < 0x10]
+    c45 = [i for i in range(len(data) - 1) if data[i] == 0x2D and 0x28 <= data[i + 1] <= 0x2F]
+    hits = []
+    for i in a63:
+        for j in a64:
+            if abs(j - i) <= 0x40:
+                for k in c45:
+                    if abs(k - i) <= 0x60:
+                        hits.append((min(i, j, k), i, j, k))
+    return sorted(set(hits))
+
+
+def cmd_fingerprint(path):
+    data = open(path, "rb").read()
+    print(f"file: {path}")
+    print(f"size: {len(data)} bytes")
+    print(f"sha256: {sha(data)}")
+    print(f"embedded version: {embedded_version(data)}")
+    print(f"known template match: {[(n, hex(o), st) for n, o, st in scan(data)] or 'none'}")
+    hits = anchors(data)
+    if not hits:
+        print("FIFO routine anchors: none found (different code; not the Klipper LIS2DW routine "
+              "or compiled very differently)")
+        return 1
+    for lo, i, j, k in hits[:3]:
+        start = max(0, lo - 16)
+        blob = data[start:start + 176]
+        print(f"FIFO routine anchors near 0x{lo:x}: and#63@0x{i:x} and#64@0x{j:x} cmp#45@0x{k:x}")
+        print(f"hex dump from 0x{start:x} (post this when asking for a new template):")
+        for off in range(0, len(blob), 16):
+            print(f"  {start + off:06x}: " + blob[off:off + 16].hex(" "))
+    return 0
+
+
 def cmd_scan(path):
     data = open(path, "rb").read()
     h = sha(data)
@@ -128,6 +185,9 @@ def cmd_scan(path):
     res = scan(data)
     if not res:
         print("  no matching bug site: this tool cannot patch this image")
+        if anchors(data):
+            print("  the LIS2DW FIFO routine looks present but compiled differently;")
+            print("  run `fingerprint` on this image and post the output to get a template made")
         return 1
     for name, off, state in res:
         print(f"  template {name}: site at file offset 0x{off:x} ({state})")
@@ -170,6 +230,8 @@ def main():
     a = sys.argv[1:]
     if len(a) >= 2 and a[0] == "scan":
         sys.exit(cmd_scan(a[1]))
+    if len(a) >= 2 and a[0] == "fingerprint":
+        sys.exit(cmd_fingerprint(a[1]))
     if len(a) >= 3 and a[0] == "patch":
         sys.exit(cmd_patch(a[1], a[2], "--allow-unknown" in a[3:]))
     sys.exit(__doc__)

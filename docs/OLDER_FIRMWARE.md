@@ -47,6 +47,21 @@ is given. A match only proves the code looks the same, not that it is safe to fl
 - **The toolhead bootloader** of an older printer has not been inspected. The tool checks the
   bootloader hash against two known values, and an older unit may differ.
 
+## Other images: how to get a template made
+
+```
+python3 tools/lis2dw_patch.py fingerprint your-thr-image.bin
+```
+
+It prints the size, SHA-256, the version name embedded in the image, any template match, and, if
+the FIFO routine is present but compiled differently, a hex dump around it. Post that output in an
+issue. A template is only added after the surrounding code has been read and the edit checked.
+
+Example of why this is needed: the main-board image in the same `Q2_V1_1_1` package
+(`KLP_MCU_MAIN_V2_1.0.4`) contains the same routine in a third form (16-bit branch, 32-bit store),
+so neither existing template matches it. That image is not the one with the accelerometer on a Q2,
+so nothing is patched there, but it shows that a new build can need a new template.
+
 ## If you want to test it
 
 1. Run the read-only `snapshot` step of [GUIDE.md](GUIDE.md) on a printer with this toolhead image
