@@ -36,6 +36,7 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
   a derived patch has been flashed and measured on one printer (386 Hz -> 1602 Hz); it needs the experimental flasher in
   [flasher-v111/](flasher-v111/). One printer only, so treat it as experimental; see
   [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md).
+  Step-by-step for v1.1.1: [docs/GUIDE_V111.md](docs/GUIDE_V111.md).
 - **The printer software version alone does not decide it.** What matters is the SHA-256 of the
   application running on your toolhead. Step 5 of the guide reads it with a read-only snapshot.
   If it is not the hash above, stop; nothing in this repo applies to your toolhead.
