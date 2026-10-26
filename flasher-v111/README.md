@@ -1,6 +1,6 @@
 # EXPERIMENTAL flasher for Qidi Q2 v1.1.1 (THR KLP_MCU_THR_V2_1.0.5)
 
-**Not hardware-tested. Use only if you accept that the toolhead could end up needing recovery.**
+**Tested on one printer only (Q2 v1.1.1, THR KLP_MCU_THR_V2_1.0.5): snapshot, probe, transfer and verify all succeeded and the rate went 386 -> 1602 Hz. Use only if you accept that the toolhead could end up needing recovery, and keep your own backup.**
 
 A minimal fork of the Qidi-Max-4-Optimized flasher (commit `ffb30299`, GPL-3.0) that admits only:
 

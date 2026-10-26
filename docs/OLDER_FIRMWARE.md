@@ -1,7 +1,9 @@
-# Older toolhead firmware (experimental, untested on hardware)
+# Older toolhead firmware (experimental, tested on one printer)
 
-**Status: nobody has flashed the older-image patch described here. Do not use it on a printer
-unless you accept the risk of a dead toolhead and know how to recover it.**
+**Status: the v1.1.1 patch (stock `e114de22…` -> `3927036f…`) was flashed on one Q2 running v1.1.1 with
+the experimental flasher in `flasher-v111/`. The sample rate went from 386 Hz to 1602 Hz (max gap
+0.6 ms) and the image read back verified, bootloader unchanged. One printer is one data point: use it
+only if you accept the risk of a toolhead that needs recovery, and keep your own backup.**
 
 ## What was found
 
@@ -88,4 +90,4 @@ accepts the image (the upstream flasher only admits pinned hashes).
 
 ## Experimental flasher for v1.1.1
 
-`flasher-v111/` contains a minimal fork of the flashing tool that admits only the v1.1.1 stock and patched hashes. It has **not** been run against hardware. See its README.
+`flasher-v111/` contains a minimal fork of the flashing tool that admits only the v1.1.1 stock and patched hashes. It was used once on real hardware (see status at the top). See its README.

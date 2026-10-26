@@ -33,7 +33,7 @@ KNOWN = {
         "B", "9d2360ba47ebd720dbef07a0a4ebaf26004360bca090997d7b4a118c41460ac9", True,
         "Q2 THR 02.02.01.08 (35,056 bytes)"),
     "e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b": (
-        "A", "3927036f418976aa34c61f09ad426364e23df1b04687678424df7c6593eccfae", False,
+        "A", "3927036f418976aa34c61f09ad426364e23df1b04687678424df7c6593eccfae", True,
         "Q2 THR KLP_MCU_THR_V2_1.0.5 from the Q2 v1.1.1 package (34,780 bytes)"),
 }
 
