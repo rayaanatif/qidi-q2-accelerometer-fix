@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "patch_id": "q2-v111-thr-lis2dw-fifo-v1",
+  "experimental": true,
+  "upstream_fix": "https://github.com/Klipper3d/klipper/commit/6269dda56bb7c08263153b18715d08e2d964bcab",
+  "thr": {
+    "member": "QD_Q2_THR (Qidi Q2 v1.1.1 package, KLP_MCU_THR_V2_1.0.5)",
+    "size": 34780,
+    "stock_sha256": "e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b",
+    "patched_sha256": "3927036f418976aa34c61f09ad426364e23df1b04687678424df7c6593eccfae",
+    "load_address": "0x08008000",
+    "patches": [
+      {"offset": "0x4394", "description": "cbnz r6 -> cbz r6 (rearm polling on an empty FIFO)"},
+      {"offset": "0x4398", "description": "strb r6,[r3,#8] -> strb r7,[r3,#8] (r7 holds zero)"}
+    ]
+  }
+}

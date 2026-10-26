@@ -85,3 +85,7 @@ This is built from only those two images. That other Q2 releases are structured 
 **assumption**; run `scan` / `fingerprint` on any new image first. Only 02.02.01.08 is verified
 on hardware. Everything else prints an UNTESTED warning, and flashing still needs a route that
 accepts the image (the upstream flasher only admits pinned hashes).
+
+## Experimental flasher for v1.1.1
+
+`flasher-v111/` contains a minimal fork of the flashing tool that admits only the v1.1.1 stock and patched hashes. It has **not** been run against hardware. See its README.
