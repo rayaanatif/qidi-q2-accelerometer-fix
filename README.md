@@ -44,7 +44,7 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
   yours, do not assume.
 - **Also tested, experimental:** the toolhead image in Qidi's `Q2_V1_1_1` package (34,780 bytes, SHA-256
   `e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b`). It has the same bug compiled
-  differently, so `apply_patch.py` refuses it; `tools/lis2dw_patch.py` and the fork in
+  differently from the Max 4 image; `tools/lis2dw_patch.py` and the fork in
   [flasher-v111/](flasher-v111/) handle it. Flashed and measured on one printer (386 -> 1602 Hz). See
   [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md) and [docs/GUIDE_V111.md](docs/GUIDE_V111.md).
 - **Anything else:** not supported. `lis2dw_patch.py scan` / `fingerprint` tell you whether an image has a site it
@@ -68,8 +68,8 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
 ## Start
 
 Pick your guide in "Which guide do I follow?" above. Helper scripts live in [tools/](tools/):
-`check_accel_rate.py` (measure the rate), `apply_patch.py` (strict, 02.02.01.08 only),
-`lis2dw_patch.py` (scan / fingerprint / patch for both known images).
+`check_accel_rate.py` (measure the rate) and `lis2dw_patch.py` (scan / fingerprint / patch for both known images;
+it refuses unknown or already patched images).
 
 ## Credits
 

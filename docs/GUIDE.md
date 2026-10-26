@@ -136,11 +136,11 @@ cd ~/q2_thr_tools/dist && sha256sum thr-before/application.bin thr-after/applica
 On your computer, using the application you read off your toolhead in step 6:
 
 ```
-python3 tools/apply_patch.py q2-thr-before/application.bin QD_Q2_THR_02.02.01.08_20260303_FIFO_v1.bin
+python3 tools/lis2dw_patch.py patch q2-thr-before/application.bin QD_Q2_THR_02.02.01.08_20260303_FIFO_v1.bin
 ```
 
-It only proceeds if the input is exactly the stock image and the output is exactly the image
-the flashing tool admits (`9d2360ba47ebd720dbef07a0a4ebaf26004360bca090997d7b4a118c41460ac9`).
+It refuses an image it does not recognise or one that is already patched, and prints the output hash,
+which must be exactly the image the flashing tool admits (`9d2360ba47ebd720dbef07a0a4ebaf26004360bca090997d7b4a118c41460ac9`).
 Copy it to the printer:
 
 ```
