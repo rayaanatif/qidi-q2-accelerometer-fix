@@ -71,3 +71,17 @@ so nothing is patched there, but it shows that a new build can need a new templa
 
 The practical alternative for most people: update the printer through Qidi's online update, which
 brings the toolhead to 02.02.01.08, and follow the main guide.
+
+## Register-agnostic matching (update)
+
+`tools/lis2dw_patch.py` no longer hard-codes which registers the compiler picked. It matches the
+instruction *shape* of the two known builds (32-bit form from THR 02.02.01.08, 16-bit form from
+the v1.1.1 THR) with any registers, then derives the edit from what it finds: the scratch register
+for the zero store (template B) or a register proven to hold zero since the function prologue
+(template A, conservative scan that refuses if anything could have overwritten it). It still
+requires exactly one match and refuses otherwise.
+
+This is built from only those two images. That other Q2 releases are structured the same is an
+**assumption**; run `scan` / `fingerprint` on any new image first. Only 02.02.01.08 is verified
+on hardware. Everything else prints an UNTESTED warning, and flashing still needs a route that
+accepts the image (the upstream flasher only admits pinned hashes).
