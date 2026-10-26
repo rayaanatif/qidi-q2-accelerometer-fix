@@ -6,8 +6,8 @@ an SSH account on the printer that can use `sudo`. On the Q2 we used, the defaul
 account (`mks`) could. Check yours in step 2. Change default passwords afterwards.
 
 **Compatibility:** this guide only applies to a toolhead running THR 02.02.01.08, application
-SHA-256 `1d34b4b0142f2a2047f08c2fae59d827bcee0adbd1563b4bd1de311dff8b2d62`. Older toolhead
-images (for example the one in Qidi's `Q2_V1_1_1` package) do not match the patch. Step 5
+SHA-256 `1d34b4b0142f2a2047f08c2fae59d827bcee0adbd1563b4bd1de311dff8b2d62`. On Q2 v1.1.1
+(`KLP_MCU_THR_V2_1.0.5`) use [GUIDE_V111.md](GUIDE_V111.md) instead. Step 5
 checks this on your own printer before anything is changed.
 
 Do one step at a time and check each result before the next. Stop at the first thing

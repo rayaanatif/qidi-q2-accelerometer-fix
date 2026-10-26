@@ -11,15 +11,28 @@ This repo is a step-by-step record of doing that on a Q2, using the flashing too
 two-byte-site patch from the Qidi Max 4 community project. It contains **no Qidi
 firmware**; you read the image off your own toolhead and patch it locally.
 
-| | Before | After |
-|---|---|---|
-| Accelerometer rate | 387 Hz | 1606 Hz |
-| Largest gap between samples | irregular | 0.6 ms |
+## Tested so far (two printers)
 
-**Tested on exactly one printer:** Q2, printer firmware 01.01.02.04, main MCU
-02.01.01.09, toolhead (THR) 02.02.01.08, toolhead bootloader hash `31f8344d...`.
-Nobody else has reported a Q2 result yet. If you try it, please open an issue with
-your versions and the output of the `snapshot` step.
+| Printer firmware | Toolhead image (SHA-256 prefix) | Rate before | Rate after | Flasher | Guide |
+|---|---|---|---|---|---|
+| 01.01.02.04 (NA) | THR 02.02.01.08 (`1d34b4b0`) | 387 Hz | 1606 Hz | upstream tool | [GUIDE.md](docs/GUIDE.md) |
+| v1.1.1 | THR KLP_MCU_THR_V2_1.0.5 (`e114de22`) | 386 Hz | 1602 Hz | [flasher-v111](flasher-v111/) (experimental) | [GUIDE_V111.md](docs/GUIDE_V111.md) |
+
+Both toolhead bootloaders were `31f8344d...`. Largest gap between samples after the fix: 0.6 ms.
+One printer per image is a small sample. If you try it, please open an issue with your versions and
+the output of the `snapshot` step.
+
+## Which guide do I follow?
+
+1. Find out which toolhead image you have. In the klippy log, `grep "Loaded MCU 'THR'" ~/printer_data/logs/klippy.log`:
+   `KLP_MCU_THR_V2_1.0.5` is the v1.1.1 image. Anything else, do not guess.
+2. The authority is the SHA-256 of the application read off your toolhead (the read-only snapshot step in either guide).
+   - `1d34b4b0...` -> [docs/GUIDE.md](docs/GUIDE.md)
+   - `e114de22...` -> [docs/GUIDE_V111.md](docs/GUIDE_V111.md) (experimental)
+   - anything else -> stop. Run `python3 tools/lis2dw_patch.py fingerprint <your image>` and open an issue with the output; nothing here has been checked on it.
+3. Windows and macOS tips: Git for Windows converts line endings and changes file hashes, so clone with
+   `git clone -c core.autocrlf=false ...`. PowerShell does not accept `&&` in the commands that run on the printer; run those in an SSH session
+   on the printer. On macOS (zsh), quote remote wildcards: `scp "user@host:path/*.ext" .`.
 
 ## Compatibility: one exact toolhead image only
 
@@ -29,14 +42,13 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
   `1d34b4b0142f2a2047f08c2fae59d827bcee0adbd1563b4bd1de311dff8b2d62`). That image ships inside
   printer firmware **01.01.02.04 (NA)**. Other Q2 releases may carry the same image; check
   yours, do not assume.
-- **Does not work on:** older toolhead images. For example the toolhead file in Qidi's
-  `Q2_V1_1_1` package (34,780 bytes, SHA-256
-  `e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b`) contains neither of the two
-  byte patterns the patch looks for, so the tools refuse it. The same bug is present in its code, and
-  a derived patch has been flashed and measured on one printer (386 Hz -> 1602 Hz); it needs the experimental flasher in
-  [flasher-v111/](flasher-v111/). One printer only, so treat it as experimental; see
-  [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md).
-  Step-by-step for v1.1.1: [docs/GUIDE_V111.md](docs/GUIDE_V111.md).
+- **Also tested, experimental:** the toolhead image in Qidi's `Q2_V1_1_1` package (34,780 bytes, SHA-256
+  `e114de22c629167381b68eb6e477b2a8dc93ee98fb2fbdb3c828f95a224c8f8b`). It has the same bug compiled
+  differently, so `apply_patch.py` refuses it; `tools/lis2dw_patch.py` and the fork in
+  [flasher-v111/](flasher-v111/) handle it. Flashed and measured on one printer (386 -> 1602 Hz). See
+  [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md) and [docs/GUIDE_V111.md](docs/GUIDE_V111.md).
+- **Anything else:** not supported. `lis2dw_patch.py scan` / `fingerprint` tell you whether an image has a site it
+  recognises, but a match is not a hardware test.
 - **The printer software version alone does not decide it.** What matters is the SHA-256 of the
   application running on your toolhead. Step 5 of the guide reads it with a read-only snapshot.
   If it is not the hash above, stop; nothing in this repo applies to your toolhead.
@@ -55,11 +67,13 @@ The patch changes bytes inside the toolhead (THR) firmware, so it only works on 
 
 ## Start
 
-Follow [docs/GUIDE.md](docs/GUIDE.md). Helper scripts live in [tools/](tools/). For other toolhead images see [docs/OLDER_FIRMWARE.md](docs/OLDER_FIRMWARE.md) (experimental, untested).
+Pick your guide in "Which guide do I follow?" above. Helper scripts live in [tools/](tools/):
+`check_accel_rate.py` (measure the rate), `apply_patch.py` (strict, 02.02.01.08 only),
+`lis2dw_patch.py` (scan / fingerprint / patch for both known images).
 
 ## Credits
 
-- The patch sites and the flashing tool: [thelegendtubaguy/Qidi-Max-4-Optimized](https://github.com/thelegendtubaguy/Qidi-Max-4-Optimized) (GPL-3.0). This repo does not copy its code; the guide tells you how to fetch it at a pinned commit.
+- The patch sites and the flashing tool: [thelegendtubaguy/Qidi-Max-4-Optimized](https://github.com/thelegendtubaguy/Qidi-Max-4-Optimized) (GPL-3.0). [GUIDE.md](docs/GUIDE.md) fetches it at a pinned commit; [flasher-v111/](flasher-v111/) is a small modified copy of it (GPL-3.0, changes in `CHANGES.diff`).
 - The upstream Klipper fix: commit 6269dda by the Klipper developers.
 
 License: GPL-3.0, to match the upstream project the patch information comes from.
